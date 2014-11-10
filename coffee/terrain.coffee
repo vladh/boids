@@ -1,32 +1,24 @@
-makeTerrainGeometry = (width, height, widthSegments, heightSegments) ->
-  geometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments)
-  X_OFFSET_DAMPEN = 0.5
-  Y_OFFSET_DAMPEN = 0.1
-  Z_OFFSET_DAMPEN = 0.02
-  randSign = -> (Math.random() > 0.5) ? 1 : -1
+perlinNoise = require('./perlin_noise')
 
-  for vertIndex in [0...geometry.vertices.length]
-    geometry.vertices[vertIndex].x += Math.random() / X_OFFSET_DAMPEN * randSign()
-    geometry.vertices[vertIndex].y += Math.random() / Y_OFFSET_DAMPEN * randSign()
-    geometry.vertices[vertIndex].z += Math.random() / Z_OFFSET_DAMPEN
+makeTerrainFaces = ({geometry, widthSegments, heightSegments}) ->
 
-  geometry.dynamic = true
-  geometry.computeFaceNormals()
-  geometry.computeVertexNormals()
-  geometry.normalsNeedUpdate = true
+makeTerrainVertices = ({geometry, noise, width, height, depth}) ->
+  positions = geometry.getAttribute('position').array
+
+makeTerrainGeometry = ({width, height, widthSegments, heightSegments,
+                        rng, noiseScalingFactor, depth}) ->
+  noise = perlinNoise({widthSegments, heightSegments, rng, noiseScalingFactor})
+
+  geometry = new THREE.BufferGeometry()
+  nrPoints = width * height
+  geometry.addAttribute('position', new THREE.Float32Attribute(nrPoints, 3))
+
+  makeTerrainVertices({geometry, noise, width, height, depth})
+  makeTerrainFaces({geometry, widthSegments, heightSegments})
+
   return geometry
 
 makeTerrain = (geometry) ->
-  uniforms = {
-    heightMap: {type: 't', value: THREE.ImageUtils.loadTexture("img/height_normal.png")}
-    multilayer: {type: 't', value: THREE.ImageUtils.loadTexture("img/multilayer3.jpg")}
-    stencil: {type: 't', value: THREE.ImageUtils.loadTexture("img/stencils.jpg")}
-    lightmap: {type: 't', value: THREE.ImageUtils.loadTexture("img/lightmap.jpg")}
-    height: {type: 'f', value: 320}
-    uvX: {type: 'i', value: 0}
-    uvY: {type: 'i', value: 0}
-    cellNumber: {type:'i', value: 64}
-  }
   material = new THREE.MeshPhongMaterial({
     ambient: 0xffffff
     color: 0xffffff
@@ -39,13 +31,11 @@ makeTerrain = (geometry) ->
   terrain.position.y = -33
   return terrain
 
-init = ->
-  TERRAIN_SIZE = 4000
-  TERRAIN_SUBDIVISIONS = TERRAIN_SIZE / 50
-  terrain = makeTerrain(makeTerrainGeometry(TERRAIN_SIZE,
-                                            TERRAIN_SIZE,
-                                            TERRAIN_SUBDIVISIONS,
-                                            TERRAIN_SUBDIVISIONS))
+init = ({width, height, widthSegments, heightSegments, rng,
+         noiseScalingFactor, depth}) ->
+  geometry = makeTerrainGeometry({width, height, widthSegments, heightSegments,
+                                  rng, noiseScalingFactor, depth})
+  terrain = makeTerrain(geometry)
   return terrain
 
 module.exports = init

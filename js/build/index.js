@@ -175,7 +175,6 @@ var init, makeTerrain, makeTerrainGeometry;
 
 makeTerrainGeometry = function(width, height, widthSegments, heightSegments) {
   var X_OFFSET_DAMPEN, Y_OFFSET_DAMPEN, Z_OFFSET_DAMPEN, geometry, randSign, vertIndex, _i, _ref;
-  geometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
   X_OFFSET_DAMPEN = 0.5;
   Y_OFFSET_DAMPEN = 0.1;
   Z_OFFSET_DAMPEN = 0.02;
@@ -190,10 +189,7 @@ makeTerrainGeometry = function(width, height, widthSegments, heightSegments) {
     geometry.vertices[vertIndex].y += Math.random() / Y_OFFSET_DAMPEN * randSign();
     geometry.vertices[vertIndex].z += Math.random() / Z_OFFSET_DAMPEN;
   }
-  geometry.dynamic = true;
-  geometry.computeFaceNormals();
-  geometry.computeVertexNormals();
-  geometry.normalsNeedUpdate = true;
+  geometry = new THREE.PlaneBufferGeometry(width, height, widthSegments, heightSegments);
   return geometry;
 };
 
