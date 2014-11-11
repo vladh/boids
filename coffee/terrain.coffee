@@ -1,18 +1,24 @@
 generateHeight = (width, height) ->
   ###
+  Modified from:
   http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html
   ###
+  maxQuality = 4
+  maxZ = 100
+  scalingFactor = 1.75
+
+  z = Math.random() * maxZ
+  quality = 1
+
   size = width * height
   data = new Uint8Array(size)
   perlin = new ImprovedNoise()
-  quality = 1
-  z = Math.random() * 100
 
-  for j in [0...4]
+  for _ in [0...maxQuality]
     for i in [0...size]
       x = i % width
-      y = ~~ (i / width)
-      data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * 1.75)
+      y = ~~(i / width)
+      data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * scalingFactor)
     quality *= 5
 
   return data

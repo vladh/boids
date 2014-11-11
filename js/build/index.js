@@ -189,19 +189,23 @@ var generateHeight, makeTerrain, makeTerrainGeometry;
 generateHeight = function(width, height) {
 
   /*
+  Modified from:
   http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html
    */
-  var data, i, j, perlin, quality, size, x, y, z, _i, _j;
+  var data, i, maxQuality, maxZ, perlin, quality, scalingFactor, size, x, y, z, _, _i, _j;
+  maxQuality = 4;
+  maxZ = 100;
+  scalingFactor = 1.75;
+  z = Math.random() * maxZ;
+  quality = 1;
   size = width * height;
   data = new Uint8Array(size);
   perlin = new ImprovedNoise();
-  quality = 1;
-  z = Math.random() * 100;
-  for (j = _i = 0; _i < 4; j = ++_i) {
+  for (_ = _i = 0; 0 <= maxQuality ? _i < maxQuality : _i > maxQuality; _ = 0 <= maxQuality ? ++_i : --_i) {
     for (i = _j = 0; 0 <= size ? _j < size : _j > size; i = 0 <= size ? ++_j : --_j) {
       x = i % width;
       y = ~~(i / width);
-      data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * 1.75);
+      data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * scalingFactor);
     }
     quality *= 5;
   }
