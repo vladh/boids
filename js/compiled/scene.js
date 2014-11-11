@@ -12,8 +12,6 @@ makeCamera = function(width, height, far) {
   var aspectRatio, camera;
   aspectRatio = width / height;
   camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, far * 1.5);
-  camera.position.y = 2000;
-  camera.rotation.x = -30 * Math.PI / 180;
   return camera;
 };
 

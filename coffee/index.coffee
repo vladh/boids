@@ -1,6 +1,7 @@
-controlsEnabled = false
 container = document.getElementById('canvas-container')
 
+CONTROLS_ENABLED = true
+AUTOROTATION_ENABLED = false
 TERRAIN_SIZE = 8000
 TERRAIN_WIDTH = TERRAIN_SIZE
 TERRAIN_HEIGHT = TERRAIN_SIZE
@@ -9,8 +10,12 @@ TERRAIN_HEIGHT_SEGMENTS = TERRAIN_SEGMENTS
 TERRAIN_WIDTH_SEGMENTS = TERRAIN_SEGMENTS
 SKYDOME_RADIUS = TERRAIN_SIZE
 
+clock = new THREE.Clock()
+
 {scene, camera, renderer} = require('./scene')(container, TERRAIN_SIZE)
-controls = new THREE.TrackballControls(camera) if controlsEnabled
+controls = new THREE.FirstPersonControls(camera) if CONTROLS_ENABLED
+controls.movementSpeed = 1000
+controls.lookSpeed = 0.1
 
 {makeTerrain, generateHeight} = require('./terrain')
 heightData = generateHeight(TERRAIN_WIDTH_SEGMENTS, TERRAIN_HEIGHT_SEGMENTS)
@@ -31,9 +36,9 @@ window.addEventListener('resize', updateDimensions, false)
 
 render = ->
   requestAnimationFrame(render)
-  controls.update() if controlsEnabled
+  controls.update(clock.getDelta()) if CONTROLS_ENABLED
   AUTOROTATION_AMOUNT = 0.001
-  terrain.rotation.y += AUTOROTATION_AMOUNT
+  terrain.rotation.y += AUTOROTATION_AMOUNT if AUTOROTATION_ENABLED
   renderer.render(scene, camera)
 
 render()

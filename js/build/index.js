@@ -1,9 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var SKYDOME_RADIUS, TERRAIN_HEIGHT, TERRAIN_HEIGHT_SEGMENTS, TERRAIN_SEGMENTS, TERRAIN_SIZE, TERRAIN_WIDTH, TERRAIN_WIDTH_SEGMENTS, camera, container, controls, controlsEnabled, generateHeight, heightData, light, lights, makeTerrain, render, renderer, scene, skydome, terrain, updateDimensions, _, _ref, _ref1;
-
-controlsEnabled = false;
+var AUTOROTATION_ENABLED, CONTROLS_ENABLED, SKYDOME_RADIUS, TERRAIN_HEIGHT, TERRAIN_HEIGHT_SEGMENTS, TERRAIN_SEGMENTS, TERRAIN_SIZE, TERRAIN_WIDTH, TERRAIN_WIDTH_SEGMENTS, camera, clock, container, controls, generateHeight, heightData, light, lights, makeTerrain, render, renderer, scene, skydome, terrain, updateDimensions, _, _ref, _ref1;
 
 container = document.getElementById('canvas-container');
+
+CONTROLS_ENABLED = true;
+
+AUTOROTATION_ENABLED = false;
 
 TERRAIN_SIZE = 8000;
 
@@ -19,11 +21,17 @@ TERRAIN_WIDTH_SEGMENTS = TERRAIN_SEGMENTS;
 
 SKYDOME_RADIUS = TERRAIN_SIZE;
 
+clock = new THREE.Clock();
+
 _ref = require('./scene')(container, TERRAIN_SIZE), scene = _ref.scene, camera = _ref.camera, renderer = _ref.renderer;
 
-if (controlsEnabled) {
-  controls = new THREE.TrackballControls(camera);
+if (CONTROLS_ENABLED) {
+  controls = new THREE.FirstPersonControls(camera);
 }
+
+controls.movementSpeed = 1000;
+
+controls.lookSpeed = 0.1;
 
 _ref1 = require('./terrain'), makeTerrain = _ref1.makeTerrain, generateHeight = _ref1.generateHeight;
 
@@ -53,11 +61,13 @@ window.addEventListener('resize', updateDimensions, false);
 render = function() {
   var AUTOROTATION_AMOUNT;
   requestAnimationFrame(render);
-  if (controlsEnabled) {
-    controls.update();
+  if (CONTROLS_ENABLED) {
+    controls.update(clock.getDelta());
   }
   AUTOROTATION_AMOUNT = 0.001;
-  terrain.rotation.y += AUTOROTATION_AMOUNT;
+  if (AUTOROTATION_ENABLED) {
+    terrain.rotation.y += AUTOROTATION_AMOUNT;
+  }
   return renderer.render(scene, camera);
 };
 
@@ -107,8 +117,6 @@ makeCamera = function(width, height, far) {
   var aspectRatio, camera;
   aspectRatio = width / height;
   camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, far * 1.5);
-  camera.position.y = 2000;
-  camera.rotation.x = -30 * Math.PI / 180;
   return camera;
 };
 

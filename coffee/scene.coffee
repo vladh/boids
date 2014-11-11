@@ -8,8 +8,9 @@ makeCamera = (width, height, far) ->
   aspectRatio = width / height
   camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, far * 1.5)
   # camera.up = new THREE.Vector3(0, 1, 0)
-  camera.position.y = 2000
-  camera.rotation.x = -30 * Math.PI / 180
+  # camera.position.z = 200
+  # camera.position.y = 2000
+  # camera.rotation.x = -30 * Math.PI / 180
   return camera
 
 makeRenderer = () ->
