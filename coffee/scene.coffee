@@ -1,15 +1,15 @@
-makeScene = ->
+makeScene = (fogDistance) ->
   scene = new THREE.Scene()
-  scene.fog = new THREE.Fog(0xeeeeff, 1, 4000)
+  scene.fog = new THREE.Fog(0xeeeeff, 1, fogDistance)
   scene.fog.color.setHSL(0.6, 0, 1)
   return scene
 
-makeCamera = (width, height) ->
+makeCamera = (width, height, far) ->
   aspectRatio = width / height
-  camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 5000)
-  camera.up = new THREE.Vector3(0, 1, 0)
-  camera.position.y = 250
-  camera.rotation.x = -15 * Math.PI / 180
+  camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, far * 1.5)
+  # camera.up = new THREE.Vector3(0, 1, 0)
+  camera.position.y = 2000
+  camera.rotation.x = -30 * Math.PI / 180
   return camera
 
 makeRenderer = () ->
@@ -19,12 +19,12 @@ makeRenderer = () ->
   })
   return renderer
 
-init = (container) ->
+init = (container, sceneSize) ->
   width = container.offsetWidth
   height = container.offsetHeight
 
-  scene = makeScene()
-  camera = makeCamera(width, height)
+  scene = makeScene(sceneSize)
+  camera = makeCamera(width, height, sceneSize)
   renderer = makeRenderer()
 
   container.appendChild(renderer.domElement)

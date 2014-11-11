@@ -6,10 +6,8 @@ Based on work done with [Phyramid](http://www.phyramid.com).
 By [Vlad-Ștefan Harbuz](http://vladh.net).
 
 Thanks to:
-* [The three.js hemisphere light example][hemiex]
-* [jbouny/terrain-generator](https://github.com/jbouny/terrain-generator)
-* [bharling/webgl-lod-landscape](https://github.com/bharling/webgl-lod-landscape)
-
-My code was inspired by these projects.
+* Lighting inspired by the [three.js hemisphere light example][hemiex]
+* Terrain generation inspired by the [three.js terrain example][terrainex]
 
 [hemiex]: http://threejs.org/examples/webgl_lights_hemisphere.html
+[terrainex]: http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html

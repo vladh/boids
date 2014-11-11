@@ -2,11 +2,13 @@ gulp = require('gulp')
 gutil = require('gulp-util')
 coffee = require('gulp-coffee')
 browserify = require('gulp-browserify')
+plumber = require('gulp-plumber')
 
 gulp.task 'coffee', ->
   try
     gulp.src('./coffee/**/*.coffee')
-        .pipe(coffee({bare: true}).on('error', gutil.log))
+        .pipe(plumber())
+        .pipe(coffee({bare: true}))
         .pipe(gulp.dest('./js/compiled'))
   catch error
     pass

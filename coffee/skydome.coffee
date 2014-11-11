@@ -1,6 +1,6 @@
 {vertexShader, fragmentShader} = require('./skydome_shaders')
 
-makeSkydome = ->
+makeSkydome = (radius) ->
   uniforms = {
     topColor: {type: "c", value: new THREE.Color(0x0077ff)}
     bottomColor: {type: "c", value: new THREE.Color(0xffffff)}
@@ -9,7 +9,7 @@ makeSkydome = ->
   }
   uniforms.topColor.value.setHSL(0.6, 1, 0.6)
 
-  geometry = new THREE.SphereGeometry(2000, 32, 15)
+  geometry = new THREE.SphereGeometry(radius, 32, 15)
   material = new THREE.ShaderMaterial({
     vertexShader: vertexShader
     fragmentShader: fragmentShader

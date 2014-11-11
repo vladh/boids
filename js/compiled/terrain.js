@@ -1,80 +1,47 @@
-var init, makeTerrain, makeTerrainGeometry;
+var generateHeight, makeTerrain, makeTerrainGeometry;
 
-makeTerrainGeometry = function(width, height, widthSegments, heightSegments) {
-  var X_OFFSET_DAMPEN, Y_OFFSET_DAMPEN, Z_OFFSET_DAMPEN, geometry, randSign, vertIndex, _i, _ref;
-  X_OFFSET_DAMPEN = 0.5;
-  Y_OFFSET_DAMPEN = 0.1;
-  Z_OFFSET_DAMPEN = 0.02;
-  randSign = function() {
-    var _ref;
-    return (_ref = Math.random() > 0.5) != null ? _ref : {
-      1: -1
-    };
-  };
-  for (vertIndex = _i = 0, _ref = geometry.vertices.length; 0 <= _ref ? _i < _ref : _i > _ref; vertIndex = 0 <= _ref ? ++_i : --_i) {
-    geometry.vertices[vertIndex].x += Math.random() / X_OFFSET_DAMPEN * randSign();
-    geometry.vertices[vertIndex].y += Math.random() / Y_OFFSET_DAMPEN * randSign();
-    geometry.vertices[vertIndex].z += Math.random() / Z_OFFSET_DAMPEN;
+generateHeight = function(width, height) {
+  var data, i, j, perlin, quality, size, x, y, z, _i, _j;
+  size = width * height;
+  data = new Uint8Array(size);
+  perlin = new ImprovedNoise();
+  quality = 1;
+  z = Math.random() * 100;
+  for (j = _i = 0; _i < 4; j = ++_i) {
+    for (i = _j = 0; 0 <= size ? _j < size : _j > size; i = 0 <= size ? ++_j : --_j) {
+      x = i % width;
+      y = ~~(i / width);
+      data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * 1.75);
+    }
+    quality *= 5;
   }
-  geometry = new THREE.PlaneBufferGeometry(width, height, widthSegments, heightSegments);
+  return data;
+};
+
+makeTerrainGeometry = function(width, height, widthSegments, heightSegments, heightData) {
+  var geometry, i, vertices, _i, _ref;
+  geometry = new THREE.PlaneBufferGeometry(width, height, widthSegments - 1, heightSegments - 1);
+  geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-(Math.PI / 2)));
+  vertices = geometry.attributes.position.array;
+  for (i = _i = 0, _ref = vertices.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    vertices[(i * 3) + 1] = heightData[i] * 10;
+  }
   return geometry;
 };
 
-makeTerrain = function(geometry) {
-  var material, terrain, uniforms;
-  uniforms = {
-    heightMap: {
-      type: 't',
-      value: THREE.ImageUtils.loadTexture("img/height_normal.png")
-    },
-    multilayer: {
-      type: 't',
-      value: THREE.ImageUtils.loadTexture("img/multilayer3.jpg")
-    },
-    stencil: {
-      type: 't',
-      value: THREE.ImageUtils.loadTexture("img/stencils.jpg")
-    },
-    lightmap: {
-      type: 't',
-      value: THREE.ImageUtils.loadTexture("img/lightmap.jpg")
-    },
-    height: {
-      type: 'f',
-      value: 320
-    },
-    uvX: {
-      type: 'i',
-      value: 0
-    },
-    uvY: {
-      type: 'i',
-      value: 0
-    },
-    cellNumber: {
-      type: 'i',
-      value: 64
-    }
-  };
+makeTerrain = function(width, height, widthSegments, heightSegments, heightData) {
+  var geometry, material, terrain;
+  geometry = makeTerrainGeometry(width, height, widthSegments, heightSegments, heightData);
   material = new THREE.MeshPhongMaterial({
-    ambient: 0xffffff,
     color: 0xffffff,
-    specular: 0x050505,
     shading: THREE.FlatShading
   });
   material.color.setHSL(0.09, 0.2, 0.4);
   terrain = new THREE.Mesh(geometry, material);
-  terrain.rotation.x = -(Math.PI / 2);
-  terrain.position.y = -33;
   return terrain;
 };
 
-init = function() {
-  var TERRAIN_SIZE, TERRAIN_SUBDIVISIONS, terrain;
-  TERRAIN_SIZE = 4000;
-  TERRAIN_SUBDIVISIONS = TERRAIN_SIZE / 50;
-  terrain = makeTerrain(makeTerrainGeometry(TERRAIN_SIZE, TERRAIN_SIZE, TERRAIN_SUBDIVISIONS, TERRAIN_SUBDIVISIONS));
-  return terrain;
+module.exports = {
+  makeTerrain: makeTerrain,
+  generateHeight: generateHeight
 };
-
-module.exports = init;

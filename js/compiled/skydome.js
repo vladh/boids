@@ -2,7 +2,7 @@ var fragmentShader, makeSkydome, vertexShader, _ref;
 
 _ref = require('./skydome_shaders'), vertexShader = _ref.vertexShader, fragmentShader = _ref.fragmentShader;
 
-makeSkydome = function() {
+makeSkydome = function(radius) {
   var geometry, material, skydome, uniforms;
   uniforms = {
     topColor: {
@@ -23,7 +23,7 @@ makeSkydome = function() {
     }
   };
   uniforms.topColor.value.setHSL(0.6, 1, 0.6);
-  geometry = new THREE.SphereGeometry(2000, 32, 15);
+  geometry = new THREE.SphereGeometry(radius, 32, 15);
   material = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
