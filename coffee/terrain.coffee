@@ -1,5 +1,7 @@
-# http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html
 generateHeight = (width, height) ->
+  ###
+  http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html
+  ###
   size = width * height
   data = new Uint8Array(size)
   perlin = new ImprovedNoise()

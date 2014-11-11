@@ -187,6 +187,10 @@ module.exports = {
 var generateHeight, makeTerrain, makeTerrainGeometry;
 
 generateHeight = function(width, height) {
+
+  /*
+  http://mrdoob.github.io/three.js/examples/webgl_geometry_terrain.html
+   */
   var data, i, j, perlin, quality, size, x, y, z, _i, _j;
   size = width * height;
   data = new Uint8Array(size);
